@@ -3,13 +3,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Card from 'react-bootstrap/Card';
+import Button from 'react-bootstrap/Button';
+import { toggleDone } from '../api/todosData';
 
-function ToDoCard({ toDoObj, children }) {
+function ToDoCard({ toDoObj, children, onUpdate }) {
   // const [onToggle, setOnToggle] = useState(false);
 
   // const toggle = (firebaseKey) => {
   //   getSingleToDo(firebaseKey)
   // };
+  const doDone = () => {
+    toggleDone(toDoObj.firebaseKey, toDoObj.isDone).then(() => onUpdate());
+  };
 
   return (
     <Card className="toDoCards" style={{ width: '18rem', margin: '10px' }}>
@@ -19,15 +24,9 @@ function ToDoCard({ toDoObj, children }) {
           {toDoObj.description}
           {toDoObj.prompt}
         </h5>
-
-        <div>
-          <input
-            type="checkbox"
-            checked={toDoObj.isDone}
-            // onChange={() => onToggle(toDoObj.isDone)}
-          />
-          <span style={{ textDecoration: toDoObj.isDone ? 'line-through' : 'none' }}>{/* {toDoObj.description} */}</span>
-        </div>
+        <Button variant={toDoObj.isDone ? 'danger' : 'outline-danger'} onClick={doDone}>
+          {toDoObj.isDone ? '⭐' : '❌'}
+        </Button>
 
         {children}
       </Card.Body>
@@ -40,8 +39,10 @@ ToDoCard.propTypes = {
     prompt: PropTypes.string,
     description: PropTypes.string,
     isDone: PropTypes.bool,
+    firebaseKey: PropTypes.string,
   }),
   children: PropTypes.shape({}).isRequired,
+  onUpdate: PropTypes.func.isRequired,
 };
 
 export default ToDoCard;
